@@ -191,6 +191,7 @@ def answer_stream(model, chat_id, question='鲁迅为什么暴打周树人？', 
     resp.encoding = 'utf-8'
     last_text = ''
     lines = resp.iter_lines(decode_unicode=True)
+    print('test rep',resp)
     for data in lines:
         # 首条消息包含对话信息
         if data.startswith('data'):
