@@ -181,7 +181,7 @@ def answer_stream(model, chat_id, question='鲁迅为什么暴打周树人？', 
     }
     headers = {
         "Accept": "*/*",
-        "Authorization": "Bearer none", # 在这里设置秘钥
+        "Authorization": "Bearer undefined", # 在这里设置秘钥
         "Content-Type": "application/json",
         "Origin": "https://chatpro.ai-pro.org",
         "Referer": "https://chatpro.ai-pro.org/chat/new",
