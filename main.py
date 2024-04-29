@@ -71,7 +71,7 @@ model_infos = {
     'openchat_3.5': 'https://chatpro.ai-pro.org/api/ask/Opensource',
     'zephyr-7B-beta': 'https://chatpro.ai-pro.org/api/ask/Opensource',
 }
-default_model = 'gpt-4-pro-max'
+default_model = 'gpt-4-1106-preview'
 
 @app.options('/v1/chat/completions')
 async def pre_chat():
