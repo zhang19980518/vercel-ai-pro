@@ -77,6 +77,77 @@ default_model = 'gpt-4-1106-preview'
 async def pre_chat():
     return Response()
 
+@app.options('/api/chat/openai')
+async def pre_chat_openai():
+    return Response()
+
+@app.post('/api/chat/openai')
+async def chat_openai(request: Request):
+    # 解析接收到的请求体为POST请求
+    request_json = await request.json()
+    messages = request_json['messages']
+    chat_id = None
+    if len(messages) > 2:
+        # 上下文
+        for msg in messages:
+            if msg['role'] == 'user':
+                chat_id = find_chat_by_question.get(msg['content'])
+                break
+
+    text = request_json['messages'][-1]['content']
+    model = request_json['model']
+
+    def next_chat_web(msg):
+        return 'data: ' + json.dumps({
+            'id': f'chatcmpl-{time.time()}',
+            'created': time.time(),
+            'object': "chat.completion.chunk",
+            'model': model,
+            'choices': [{
+                'delta': {'content': msg},
+                'index': 0,
+                'finish_reason': None if msg else 'stop'
+            }]
+        }, ensure_ascii=False) + '\n\n'
+
+    def next_chat_web_summary(msg):
+        return {
+            'id': f'chatcmpl-{time.time()}',
+            'created': time.time(),
+            'object': "chat.completion.chunk",
+            'model': model,
+            'choices': [{
+                'message': {'content': msg},
+                'index': 0
+            }]
+        }
+
+    if request_json.get('stream'):
+        # 返回流式响应
+        def generate():
+            print('-' * 30, '\n')
+            print('question: \n', text)
+            print('-' * 30, '\n')
+            print('answer: ')
+            for word in answer_stream(model, chat_id, text):
+                print(word, end='')
+                yield next_chat_web(word)
+            print()
+            yield 'data: [DONE]\n\n'
+
+        return StreamingResponse(generate(), media_type="text/event-stream")
+    else:
+        # 生成摘要
+        print('-' * 30, '\n')
+        print('question: \n', text)
+        print('-' * 30, '\n')
+        print('summary: ', end='')
+        summary = ''
+        for word in answer_stream(model, chat_id, text, True):
+            print(word, end='')
+            summary = summary + word
+        print()
+        return next_chat_web_summary(summary)
 
 @app.post('/v1/chat/completions')
 async def chat(request: Request):
