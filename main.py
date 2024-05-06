@@ -260,7 +260,7 @@ def answer_stream(model, chat_id, question='鲁迅为什么暴打周树人？', 
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     }
     resp = requests.post(url, json=req_json, headers=headers)
-    print('test rep',resp)
+    print('test rep',resp.text)
     resp.encoding = 'utf-8'
     last_text = ''
     lines = resp.iter_lines(decode_unicode=True)
