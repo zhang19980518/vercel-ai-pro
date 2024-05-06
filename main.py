@@ -3,6 +3,7 @@ import json
 import time
 
 import requests
+from curl_cffi import requests
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import StreamingResponse
@@ -258,11 +259,11 @@ def answer_stream(model, chat_id, question='鲁迅为什么暴打周树人？', 
         "Referer": "https://chatpro.ai-pro.org/chat/new",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     }
-    resp = requests.post(url, json=req_json, headers=headers, stream=True)
+    resp = requests.post(url, json=req_json, headers=headers)
+    print('test rep',resp)
     resp.encoding = 'utf-8'
     last_text = ''
     lines = resp.iter_lines(decode_unicode=True)
-    print('test rep',resp)
     for data in lines:
         # 首条消息包含对话信息
         if data.startswith('data'):
